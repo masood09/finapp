@@ -33,7 +33,7 @@ export default {
       const trn = trns[key]
       if (trn && (inculdeTrnasfers || trn.categoryId !== transferCategoryId || trn.type !== 2)) {
         // transfer
-        if (trn.type === 2) {
+        if (trn.type === 2 && inculdeTrnasfers) {
           const fromWallet = wallets[trn.fromWalletId]
           const toWallet = wallets[trn.toWalletId]
 

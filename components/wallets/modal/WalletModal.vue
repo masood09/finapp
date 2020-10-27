@@ -18,18 +18,22 @@ export default {
   computed: {
     deleteInfo () {
       if (this.trnsIds.length > 0) {
-        return `It's also will delete ${this.trnsIds.length} trns in this wallet`
+        // TODO Translate
+        return `By deleting this Wallet we also will delete ${this.trnsIds.length} trns, including Transfers. This means what possible balance in other Wallets will change.`
       }
       return null
     },
     walletId () {
       return this.$store.state.wallets.modal.id
     },
+    // ! Move this to getters
     trnsIds () {
       const trns = this.$store.state.trns.items
       const trnsIds = []
       for (const trnId in trns) {
         if (trns[trnId].walletId === this.walletId) { trnsIds.push(trnId) }
+        if (trns[trnId].fromWalletId === this.walletId) { trnsIds.push(trnId) }
+        if (trns[trnId].toWalletId === this.walletId) { trnsIds.push(trnId) }
       }
       return trnsIds
     }
@@ -86,8 +90,8 @@ Portal(
   to="modal"
 )
   ModalBottom(
-    @onClose="$store.commit('wallets/hideWalletModal')"
     @afterClose="$store.commit('wallets/setWalletModalId', null)"
+    @onClose="$store.commit('wallets/hideWalletModal')"
   )
     template(v-if="walletId")
       template(slot="emptyHeader")

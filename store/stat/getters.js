@@ -182,8 +182,8 @@ export default {
     const statExpenses = {}
     for (const categoryId in categoriesWithTrnsIds) {
       const total = categoriesTotal[categoryId]
-      if (total.incomes > 0) statIncomes[categoryId] = total
-      if (total.expenses > 0) statExpenses[categoryId] = total
+      if (total.incomes > 0) { statIncomes[categoryId] = total }
+      if (total.expenses > 0) { statExpenses[categoryId] = total }
     }
 
     // sort categories amount
@@ -193,8 +193,8 @@ export default {
 
       if (categoriesIds.length) {
         sortedCategoriesIds = categoriesIds.sort((a, b) => {
-          if (categories[a][typeName] > categories[b][typeName]) return -1
-          if (categories[a][typeName] < categories[b][typeName]) return 1
+          if (categories[a][typeName] > categories[b][typeName]) { return -1 }
+          if (categories[a][typeName] < categories[b][typeName]) { return 1 }
           return 0
         })
       }

@@ -16,17 +16,15 @@ export default {
   computed: {
     walletFromId () {
       return this.$store.state.trnForm.transfer.from || this.$store.state.trnForm.values.walletId || this.$store.getters['wallets/walletsSortedIds'][0]
-      // if (this.$store.state.trnForm.values.trnId) {
-      // }
-      // else {
-      //   return this.$store.state.trnForm.values.walletId || this.$store.getters['wallets/walletsSortedIds'][0]
-      // }
     },
     walletFrom () {
       return this.$store.state.wallets.items[this.walletFromId]
     },
     walletToId () {
-      return this.$store.state.trnForm.transfer.to || this.$store.getters['wallets/walletsSortedIds'][1]
+      if (this.$store.state.wallets.items[this.$store.state.trnForm.transfer.to]) {
+        return this.$store.state.trnForm.transfer.to
+      }
+      return this.$store.getters['wallets/walletsSortedIds'][1]
     },
     walletTo () {
       return this.$store.state.wallets.items[this.walletToId]
