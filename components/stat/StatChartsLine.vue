@@ -26,12 +26,12 @@ export default {
       for (let period = 0; period < diff; period++) {
         const periodStartDate = dayjs().subtract(period, filterPeriod).startOf(filterPeriod)
         const periodEndDate = dayjs().subtract(period, filterPeriod).endOf(filterPeriod)
-        const ids = trnsIds
-          .filter((trnId) => {
-            return trns[trnId].date >= periodStartDate &&
-              trns[trnId].date <= periodEndDate &&
-              trns[trnId].categoryId !== transferCategoryId
-          })
+        const ids = trnsIds.filter(trnId => (
+          trns[trnId].date >= periodStartDate &&
+          trns[trnId].date <= periodEndDate &&
+          trns[trnId].categoryId !== transferCategoryId &&
+          trns[trnId].type !== 2
+        ))
 
         values[periodStartDate.valueOf()] = {
           date: periodStartDate.valueOf(),

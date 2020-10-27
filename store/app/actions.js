@@ -17,7 +17,7 @@ export default {
       if (user) {
         try {
           if (rootState.user.user && rootState.user.user.uid && rootState.user.user.uid !== user.uid) {
-            dispatch('clearUserData')
+            // dispatch('clearUserData')
           }
           dispatch('trns/initOfflineTrns', null, { root: true })
           await dispatch('user/initUser', user, { root: true })

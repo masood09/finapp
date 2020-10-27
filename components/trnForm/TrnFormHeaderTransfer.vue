@@ -1,19 +1,26 @@
 <script>
 export default {
   fetch () {
-    this.$store.commit('trnForm/setTrnFormTransfer', {
-      tranferType: 'from',
-      walletId: this.walletFromId
-    })
-    this.$store.commit('trnForm/setTrnFormTransfer', {
-      tranferType: 'to',
-      walletId: this.walletToId
-    })
+    if (!this.$store.state.trnForm.values.trnId) {
+      this.$store.commit('trnForm/setTrnFormTransfer', {
+        tranferType: 'from',
+        walletId: this.$store.state.trnForm.values.walletId
+      })
+      this.$store.commit('trnForm/setTrnFormTransfer', {
+        tranferType: 'to',
+        walletId: this.walletToId
+      })
+    }
   },
 
   computed: {
     walletFromId () {
-      return this.$store.state.trnForm.values.walletId || this.$store.getters['wallets/walletsSortedIds'][0]
+      return this.$store.state.trnForm.transfer.from || this.$store.state.trnForm.values.walletId || this.$store.getters['wallets/walletsSortedIds'][0]
+      // if (this.$store.state.trnForm.values.trnId) {
+      // }
+      // else {
+      //   return this.$store.state.trnForm.values.walletId || this.$store.getters['wallets/walletsSortedIds'][0]
+      // }
     },
     walletFrom () {
       return this.$store.state.wallets.items[this.walletFromId]
@@ -35,7 +42,7 @@ export default {
   //- Wallet from
   template(v-if="walletFrom")
     .trnFormHeaderItem
-      .trnFormHeaderItem__desc From wallet
+      .trnFormHeaderItem__desc {{ $t('trnForm.transfer.fromText') }}
       WalletItem(
         :id="walletFromId"
         :showBase="false"
@@ -48,7 +55,7 @@ export default {
   //- Wallet to
   template(v-if="walletTo")
     .trnFormHeaderItem
-      .trnFormHeaderItem__desc To wallet
+      .trnFormHeaderItem__desc {{ $t('trnForm.transfer.toText') }}
       WalletItem(
         :id="walletToId"
         :showBase="false"

@@ -131,30 +131,19 @@ export default {
     },
 
     handleSubmitTrnasfer () {
+      const id = this.$store.state.trnForm.values.trnId || generateId(dayjs().valueOf())
       const values = {
-        amount: this.$store.state.trnForm.values.amount,
-        categoryId: this.$store.getters['categories/transferCategoryId'],
-        date: dayjs(this.$store.state.trnForm.values.date).valueOf()
+        ...this.$store.state.trnForm.values,
+        date: dayjs(this.$store.state.trnForm.values.date).valueOf(),
+        fromAmount: this.$store.state.trnForm.values.amount,
+        fromWalletId: this.$store.state.trnForm.transfer.from,
+        toAmount: this.$store.state.trnForm.values.amount,
+        toWalletId: this.$store.state.trnForm.transfer.to
       }
 
-      // Income
       this.$store.dispatch('trns/addTrn', {
-        id: generateId(dayjs().valueOf()),
-        values: {
-          ...values,
-          walletId: this.$store.state.trnForm.transfer.to,
-          amountType: 1
-        }
-      })
-
-      // Expense
-      this.$store.dispatch('trns/addTrn', {
-        id: generateId(dayjs().valueOf()),
-        values: {
-          ...values,
-          walletId: this.$store.state.trnForm.transfer.from,
-          amountType: 0
-        }
+        id,
+        values
       })
     },
 
@@ -209,7 +198,7 @@ export default {
         return false
       }
 
-      if (!formValues.walletId) {
+      if (formValues.type !== 2 && !formValues.walletId) {
         this.$notify({
           type: 'error',
           title: '😮',
@@ -218,7 +207,7 @@ export default {
         return false
       }
 
-      if (!formValues.categoryId) {
+      if (formValues.type !== 2 && !formValues.categoryId) {
         this.$notify({
           type: 'error',
           title: '😮',
@@ -291,8 +280,8 @@ export default {
           .swiper-container(ref="slider")
             .swiper-wrapper
               .swiper-slide(ref="getHeight")
-                .trnForm__title(v-if="$store.state.trnForm.values.trnId") {{ $t('trnForm.titleEditTrn') }}
-                .trnForm__title(v-if="!$store.state.trnForm.values.trnId") {{ $t('trnForm.titleCreateTrn') }}
+                .trnForm__title(v-if="$store.state.trnForm.values.trnId") {{ amountType !== 2 ? $t('trnForm.titleEditTrn') : $t('trnForm.titleEditTransfer') }}
+                .trnForm__title(v-if="!$store.state.trnForm.values.trnId") {{ amountType !== 2 ? $t('trnForm.titleCreateTrn') : $t('trnForm.titleCreateTransfer') }}
 
                 //- Laptop
                 template(v-if="$store.state.ui.pc")

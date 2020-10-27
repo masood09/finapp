@@ -23,7 +23,7 @@ export default {
     styles () {
       return {
         height: `${Math.abs(this.total) / Math.abs(this.biggest) * 100}%`,
-        background: this.category.color
+        background: this.category && this.category.color
       }
     },
     amount () {
@@ -64,9 +64,11 @@ export default {
 
 <template lang="pug">
 .statCatsItem.statCatsItem.swiper-no-swiping(
-  @click="() => $store.dispatch('filter/handleSetFilterCategory', categoryId)"
+  v-if="category"
   @mouseenter="handleMouseEnter"
-  @mouseleave="handleMouseLeave")
+  @mouseleave="handleMouseLeave"
+  @click="() => $store.dispatch('filter/handleSetFilterCategory', categoryId)"
+)
   .statCatsItem__graph
     .statCatsItem__graph__in(:style="styles")
       .statCatsItem__graph__amount {{ amount }}

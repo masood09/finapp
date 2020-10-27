@@ -16,10 +16,16 @@ export default {
       return this.$store.state.trns.items[this.trnId]
     },
     category () {
-      return this.$store.state.categories.items[this.$store.state.trns.items[this.trnId].categoryId]
+      if (this.trn.type !== 2) {
+        return this.$store.state.categories.items[this.$store.state.trns.items[this.trnId].categoryId]
+      }
+      return false
     },
     wallet () {
-      return this.$store.state.wallets.items[this.$store.state.trns.items[this.trnId].walletId]
+      if (this.trn.type !== 2) {
+        return this.$store.state.wallets.items[this.$store.state.trns.items[this.trnId].walletId]
+      }
+      return false
     },
     budgets () {
       return this.$store.getters['budgets/budgets']
@@ -86,6 +92,7 @@ Portal(
 )
   ModalBottom(
     :key="trnId"
+    :isShowModalOnHeader="false"
     @onClose="$store.commit('trns/hideTrnModal')"
     @afterClose="$store.commit('trns/setTrnModalId', null)"
   )
@@ -122,6 +129,7 @@ Portal(
 
       .moreActions
         Button.marginBottom(
+          v-if="trn && trn.type !== 2"
           :title="`${$t('base.setFilter')} ${this.category.name}`"
           className="_borderBottom"
           icon="mdi mdi-folder-star"
@@ -129,6 +137,7 @@ Portal(
         )
 
         Button.marginBottom(
+          v-if="trn && trn.type !== 2"
           :class="{ marginBottom: budgets }"
           :title="`${$t('base.setFilter')} ${this.wallet.name}`"
           className="_borderBottom"
@@ -137,7 +146,7 @@ Portal(
         )
 
         Button(
-          v-if="budgets && $store.getters['user/isTester']"
+          v-if="trn && trn.type !== 2 && budgets && $store.getters['user/isTester']"
           :class="{ marginBottom: groups }"
           :title="$t('budgets.show')"
           className="_borderBottom"
@@ -146,7 +155,7 @@ Portal(
         )
 
         Button(
-          v-if="groups && $store.getters['user/isTester']"
+          v-if="trn && trn.type !== 2 && groups && $store.getters['user/isTester']"
           className="_borderBottom"
           icon="mdi mdi-folder-multiple-outline"
           :title="$t('groups.show')"

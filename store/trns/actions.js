@@ -10,20 +10,42 @@ import {
 import { db } from '~/services/firebaseConfig'
 
 export default {
-  // create new trn and save it to offline
+  // Create new trn and save it to offline
   addTrn ({ commit, rootState }, { id, values }) {
     const uid = rootState.user.user.uid
     const trns = rootState.trns.items
+    const trnType = Number(values.amountType) || 0
+
     let isTrnSavedOnline = false
-    const formatedTrnValues = {
-      amount: Number(String(values.amount).replace(/\s+/g, '')),
-      categoryId: values.categoryId,
-      date: dayjs(values.date).valueOf(),
-      description: values.description || null,
-      edited: dayjs().valueOf(),
-      groups: values.groups || null,
-      type: Number(values.amountType) || 0,
-      walletId: values.walletId
+    let formatedTrnValues = {}
+
+    // Incomes || expenses
+    if (trnType !== 2) {
+      formatedTrnValues = {
+        amount: Number(String(values.amount).replace(/\s+/g, '')),
+        categoryId: values.categoryId,
+        date: dayjs(values.date).valueOf(),
+        description: values.description || null,
+        edited: dayjs().valueOf(),
+        groups: values.groups || null,
+        type: trnType,
+        walletId: values.walletId
+      }
+    }
+
+    // trnasfer
+    else {
+      const amount = Number(String(values.amount).replace(/\s+/g, ''))
+      formatedTrnValues = {
+        date: dayjs(values.date).valueOf(),
+        description: values.description || null,
+        edited: dayjs().valueOf(),
+        fromAmount: amount,
+        fromWalletId: values.fromWalletId,
+        toAmount: amount,
+        toWalletId: values.toWalletId,
+        type: trnType
+      }
     }
 
     localforage.setItem('next.trns', { ...trns, [id]: formatedTrnValues })
@@ -40,12 +62,24 @@ export default {
       if (!isTrnSavedOnline) { saveTrnToAddLaterLocal({ id, values }) }
     }, 100)
 
-    commit('trnForm/setTrnFormValues', {
-      trnId: null,
-      amount: '0',
-      amountEvaluation: null,
-      description: null
-    }, { root: true })
+    // Incomes || expenses
+    if (trnType !== 2) {
+      commit('trnForm/setTrnFormValues', {
+        trnId: null,
+        amount: '0',
+        amountEvaluation: null,
+        description: null
+      }, { root: true })
+    }
+    // Trnasfer
+    else {
+      commit('trnForm/setTrnFormValues', {
+        trnId: null,
+        amount: '0',
+        amountEvaluation: null,
+        description: null
+      }, { root: true })
+    }
   },
 
   // delete
@@ -83,9 +117,10 @@ export default {
       const items = Object.freeze(snapshot.val())
       if (items) {
         for (const trnId of Object.keys(items)) {
-          if (!items[trnId].walletId || items[trnId].accountId) {
+          if (items[trnId].type !== 2 && (!items[trnId].walletId || items[trnId].accountId)) {
             commit('app/setAppStatus', 'loading', { root: true })
             const trn = items[trnId]
+            console.log('trn', trn)
             db.ref(`users/${uid}/trns/${trnId}`)
               .set({
                 amount: trn.amount,

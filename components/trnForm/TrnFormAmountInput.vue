@@ -17,6 +17,10 @@ export default {
       return this.$store.state.trnForm.show
     },
 
+    isEdit () {
+      return !!this.$store.state.trnForm.values.trnId
+    },
+
     amounIsNumber () {
       if (!this.amountString || this.amountString == 0) { return true }
       const amountString = String(this.amountString).replace(/\s/g, '')
@@ -31,6 +35,29 @@ export default {
         _expenses: this.amountType === 0,
         _incomes: this.amountType === 1
       }
+    },
+
+    isShowChangeTypeToTrnasaction () {
+      const isTransactionType = this.amountType !== 2
+      const isEdit = !!this.$store.state.trnForm.values.trnId
+
+      if (isEdit) {
+        return isTransactionType
+      }
+      return true
+    },
+
+    isShowChangeTypeToTransfer () {
+      const isEnoughtWallets = this.$store.getters['wallets/walletsSortedIds'].length > 1
+      const isTransferType = this.amountType === 2
+      const isEdit = !!this.$store.state.trnForm.values.trnId
+      console.log(this.$store.state.trnForm.values)
+
+      console.log(isEdit, isEnoughtWallets)
+      if (isEdit) {
+        return isEnoughtWallets && isTransferType
+      }
+      return isEnoughtWallets
     }
   },
 
@@ -119,17 +146,19 @@ export default {
   .trnFormAmountPc
     .trnFormAmountPc__types
       .trnFormAmountPc__type._expenses(
-        @click="() => setAmountType(0)"
+        v-if="isShowChangeTypeToTrnasaction"
         :class="{ _active: amountType === 0 }"
+        @click="() => setAmountType(0)"
       ) {{ $t('money.expenses') }}
 
       .trnFormAmountPc__type._incomes(
-        @click="() => setAmountType(1)"
+        v-if="isShowChangeTypeToTrnasaction"
         :class="{ _active: amountType === 1 }"
+        @click="() => setAmountType(1)"
       ) {{ $t('money.incomes') }}
 
       .trnFormAmountPc__type(
-        v-if="$store.getters['wallets/walletsSortedIds'].length > 1"
+        v-if="isShowChangeTypeToTransfer"
         @click="() => setAmountType(2)"
         :class="{ _active: amountType === 2 }"
       ) {{ $t('trnForm.transferTitle') }}
@@ -150,23 +179,23 @@ export default {
   .action
     template(v-if="!amountString")
       Button(
+        :title="$t('trnForm.amountButtonEmpty')"
         className="_grey _text-center"
         size="lg"
-        title="Write amount"
         @onClick="handleMath"
       )
 
-    template(v-if="amounIsNumber")
+    template(v-else)
       Button(
         v-if="$store.state.trnForm.values.trnId"
-        title="Edit transaction"
+        :title="amountType === 2 ? $t('trnForm.editTransferButton') : $t('trnForm.editTrnButton')"
         className="_blue _text-center"
         size="lg"
         @onClick="$emit('onFormSubmit')"
       )
       Button(
         v-else
-        :title="$store.state.trnForm.values.amountType === 2 ? $t('trnForm.createTransferButton') : $t('trnForm.createTrnButton')"
+        :title="amountType === 2 ? $t('trnForm.createTransferButton') : $t('trnForm.createTrnButton')"
         className="_blue _text-center"
         size="lg"
         @onClick="$emit('onFormSubmit')"
@@ -213,7 +242,7 @@ export default {
 
   &__types
     display flex
-    justify-content space-between
+    justify-content space-around
     padding $m8 $m9
     padding-bottom $m5
 

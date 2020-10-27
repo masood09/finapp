@@ -70,6 +70,7 @@ export default {
 
 <template lang="pug">
 .statItem(
+  v-if="category"
   @click="toogleShowInside(categoryId)"
   :class="{ _active: showInside }"
 )

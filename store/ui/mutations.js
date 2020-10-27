@@ -37,10 +37,6 @@ export default {
     state.statSummuryVisibility = status
   },
 
-  setStatLastTrnsVisibility (state, status) {
-    state.statLastTrnsVisibility = status
-  },
-
   setShow (state, { id, value }) {
     state.stat[id] = value
   }

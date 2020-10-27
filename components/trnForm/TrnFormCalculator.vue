@@ -22,7 +22,7 @@ export default {
 
     buttonName () {
       if (this.submitClassName._zero) {
-        return 'Write amount'
+        return this.$t('trnForm.amountButtonEmpty')
       }
       else if (this.submitClassName._math) {
         return `Calculate ${this.amountEvaluation}`

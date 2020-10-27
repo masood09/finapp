@@ -16,7 +16,7 @@ export default {
 TrnFormModal(
   v-if="$store.state.trnForm.modal.transferTo"
   :show="$store.state.trnForm.modal.transferTo"
-  title="Transfer to wallet"
+  :title="$t('trnForm.transfer.toTitle')"
   @onClose="$store.commit('trnForm/toogleTrnFormModal', 'transferTo')"
 )
   WalletsList3(

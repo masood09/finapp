@@ -13,6 +13,7 @@ export default {
     commit('openTrnForm')
     switch (action) {
       case 'create':
+        // Load last trn
         if (rootGetters['trns/hasTrns'] && rootState.trns.items[rootGetters['trns/lastCreatedTrnId']]) {
           const lastTrn = rootState.trns.items[rootGetters['trns/lastCreatedTrnId']]
           commit('setTrnFormValues', {
@@ -26,6 +27,7 @@ export default {
             walletId: lastTrn.walletId
           })
         }
+        // Fill data from first wallet and category
         else {
           const categoriesIds = Object.keys(rootState.categories.items)
           const categoryId = categoriesIds[0]
@@ -47,17 +49,43 @@ export default {
       case 'edit':
         if (trnId && rootGetters['trns/hasTrns']) {
           const trn = rootState.trns.items[trnId]
-          commit('setTrnFormValues', {
-            ...trn,
-            amount: trn.amount,
-            amountEvaluation: null,
-            amountType: trn.type,
-            categoryId: trn.categoryId,
-            date: trn.date,
-            description: trn.description || null,
-            trnId,
-            walletId: trn.walletId
-          })
+
+          // Incomes || Expenses
+          if (trn.type !== 2) {
+            commit('setTrnFormValues', {
+              ...trn,
+              amount: trn.amount,
+              amountEvaluation: null,
+              amountType: trn.type,
+              categoryId: trn.categoryId,
+              date: trn.date,
+              description: trn.description || null,
+              trnId,
+              walletId: trn.walletId
+            })
+          }
+          // Trnasfer
+          else {
+            console.log(trn)
+            commit('setTrnFormValues', {
+              ...trn,
+              amount: trn.fromAmount,
+              amountEvaluation: trn.fromAmount,
+              amountType: trn.type,
+              date: trn.date,
+              description: trn.description || null,
+              trnId
+            })
+
+            commit('setTrnFormTransfer', {
+              tranferType: 'from',
+              walletId: trn.fromWalletId
+            })
+            commit('setTrnFormTransfer', {
+              tranferType: 'to',
+              walletId: trn.toWalletId
+            })
+          }
         }
         break
 

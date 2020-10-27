@@ -12,10 +12,12 @@ export default {
 
   trnForm: {
     transferTitle: 'Перевод',
-    createTrnButton: 'Создать транзакцию',
-    createTransferButton: 'Создать перевод',
-    titleEditTrn: 'Редактирование транзакции',
-    titleCreateTrn: 'Создание транзакции',
+    createTrnButton: 'Создать Транзакцию',
+    createTransferButton: 'Создать Перевод',
+    titleEditTrn: 'Редактирование Транзакции',
+    titleEditTransfer: 'Редактирование Перевода',
+    titleCreateTrn: 'Создание Транзакции',
+    titleCreateTransfer: 'Создание Перевода',
     filterWalletAndCategory: 'Кошелек и Категория',
     filterWallet: 'Только Кошелек',
     filterAll: 'Все',
@@ -24,7 +26,19 @@ export default {
     description: {
       title: 'Описание',
       placeholder: 'Напишите описание...'
-    }
+    },
+    transfer: {
+      fromShort: 'Из',
+      toShort: 'В',
+      fromTitle: 'Перевести из кошелька',
+      fromText: 'Из кошелька',
+      toTitle: 'Перевести в кошелек',
+      toText: 'В кошелек'
+    },
+
+    editTrnButton: 'Сохранить Транзакцию',
+    editTransferButton: 'Сохранить Перевод',
+    amountButtonEmpty: 'Введи трату'
   },
 
   about: {

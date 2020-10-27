@@ -2,7 +2,7 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import 'firebase/database'
 
-const config = {
+const firebaseConfig = {
   apiKey: 'AIzaSyAjJG6UrfA1FEzV8qbjmuk8wiUic0uWv-8',
   authDomain: 'finapp-17474.firebaseapp.com',
   databaseURL: 'https://finapp-17474.firebaseio.com',
@@ -14,7 +14,7 @@ const config = {
 
 export const app = firebase.apps.length
   ? firebase.app()
-  : firebase.initializeApp(config)
+  : firebase.initializeApp(firebaseConfig)
 
 export const db = app.database()
 export const auth = firebase.auth()

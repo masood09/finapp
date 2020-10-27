@@ -54,8 +54,13 @@ export default {
     for (let period = 0; period < diff; period++) {
       const dateStartOfPeriod = dayjs().subtract(period, periodGroup).startOf(periodGroup)
       const dateEndOfPeriod = dayjs().subtract(period, periodGroup).endOf(periodGroup)
-      const ids = trnsIds
-        .filter(trnId => (trns[trnId].date >= dateStartOfPeriod) && (trns[trnId].date <= dateEndOfPeriod) && (trns[trnId].categoryId !== transferCategoryId))
+
+      const ids = trnsIds.filter(trnId => (
+        trns[trnId].date >= dateStartOfPeriod) &&
+        trns[trnId].date <= dateEndOfPeriod &&
+        trns[trnId].categoryId !== transferCategoryId &&
+        trns[trnId].type !== 2
+      )
 
       stat[dateStartOfPeriod.valueOf()] = {
         date: dateStartOfPeriod.valueOf(),

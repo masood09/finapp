@@ -11,10 +11,12 @@ export default {
 
   trnForm: {
     transferTitle: 'Transfer',
-    createTrnButton: 'Create transaction',
-    createTransferButton: 'Create transfer',
-    titleEditTrn: 'Edit transaction',
-    titleCreateTrn: 'Create new transaction',
+    createTrnButton: 'Create Transaction',
+    createTransferButton: 'Create Transfer',
+    titleEditTrn: 'Edit Transaction',
+    titleEditTransfer: 'Edit Transfer',
+    titleCreateTrn: 'Create Transaction',
+    titleCreateTransfer: 'Create Transfer',
     filterWalletAndCategory: 'Wallet & Category',
     filterWallet: 'Wallet only',
     filterAll: 'Everything',
@@ -23,7 +25,19 @@ export default {
     description: {
       title: 'Description',
       placeholder: 'Write description...'
-    }
+    },
+    transfer: {
+      fromShort: 'From',
+      toShort: 'To',
+      fromTitle: 'Transfer from wallet',
+      fromText: 'From wallet',
+      toTitle: 'Transfer to wallet',
+      toText: 'To wallet'
+    },
+
+    editTrnButton: 'Save Transaction',
+    editTransferButton: 'Save Transfer',
+    amountButtonEmpty: 'Write amount'
   },
 
   about: {

@@ -39,12 +39,25 @@ export default {
       const trns = rootState.trns.items
       let amount = 0
       const trnsIds = rootGetters['trns/getTrnsIdsInWallet'](walletId)
+
       for (const trnId of trnsIds) {
-        if (trns[trnId].type === 0) {
-          amount = amount - trns[trnId].amount
-        }
-        else {
-          amount = amount + trns[trnId].amount
+        switch (trns[trnId].type) {
+          case 0:
+            amount = amount - trns[trnId].amount
+            break
+
+          case 1:
+            amount = amount + trns[trnId].amount
+            break
+
+          case 2:
+            if (trns[trnId].fromWalletId === walletId) {
+              amount = amount - trns[trnId].fromAmount
+            }
+            else {
+              amount = amount + trns[trnId].toAmount
+            }
+            break
         }
       }
       return amount || 0

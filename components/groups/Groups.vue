@@ -28,7 +28,9 @@ export default {
 </script>
 
 <template lang="pug">
-ComponentWrap
+ComponentWrap(
+  v-if="groups"
+)
   template(slot="headerLeft")
     div {{ $t('groups.name') }}
 

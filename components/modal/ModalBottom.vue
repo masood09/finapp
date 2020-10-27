@@ -15,6 +15,11 @@ export default {
     paddingless: {
       type: Boolean,
       default: false
+    },
+
+    isShowModalOnHeader: {
+      type: Boolean,
+      default: true
     }
   },
 
@@ -98,7 +103,7 @@ export default {
       //--------------------------------------
       .modalBottom__header(
         v-if="$slots.header || title"
-        @click="onCloseModal"
+        @click="isShowModalOnHeader ? onCloseModal : null"
       )
         //- Slot
         template(v-if="$slots.header")

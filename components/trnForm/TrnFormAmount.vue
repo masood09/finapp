@@ -29,6 +29,7 @@ export default {
   methods: {
     handleChangeAmountType () {
       let nextAmountType = 0
+
       switch (this.amountType) {
         case 0:
           nextAmountType = 1

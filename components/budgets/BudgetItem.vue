@@ -68,7 +68,10 @@ export default {
 </script>
 
 <template lang="pug">
-.budgetItem(@click="removeBudgetId(budget.id)")
+.budgetItem(
+  v-if="budget"
+  @click="removeBudgetId(budget.id)"
+)
   .budgetItem__countTotal(v-if="budget.countTotal")
 
   .budgetItem__top(@click="isTrnsVisible = !isTrnsVisible")
