@@ -1,9 +1,17 @@
-<script>
+<script lang="ts">
+// @ts-ignore
 import Swiper from 'swiper'
 import 'swiper/swiper-bundle.css'
-import { ref, useContext } from 'nuxt-composition-api'
+import { ref, useContext } from '@nuxtjs/composition-api'
+// @ts-ignore
 import generateId from '~/utils/id'
+// @ts-ignore
 import useTouchClose from '~/composables/useTouchClose'
+// @ts-ignore
+import useCalculator from '~/components/trnForm/calculator/useCalculator'
+// @ts-ignore
+import useTrnFormValidate from '~/components/trnForm/useTrnFormValidate'
+// @ts-ignore
 import { successEmo, random } from '~/assets/js/emo'
 
 export default {
@@ -42,39 +50,57 @@ export default {
   },
 
   computed: {
+    // @ts-ignore
     show () {
+      // @ts-ignore
       return this.$store.state.trnForm.show
     },
 
+    // @ts-ignore
     isTransfer () {
+      // @ts-ignore
       return this.$store.state.trnForm.values.amountType === 2
     },
 
+    // @ts-ignore
     amountType () {
+      // @ts-ignore
       return this.$store.state.trnForm.values.amountType
     },
 
     isShowFirstWallets () {
+      // @ts-ignore
       if (this.$store.getters['wallets/walletsSortedIds'].length >= 3) { return true }
-
       return false
     }
   },
 
   watch: {
+    // @ts-ignore
     show: {
+      // @ts-ignore
       handler (show) {
+        const { clearExpression } = useCalculator()
+
         if (show) {
+          // @ts-ignore
           this.$nextTick(() => {
+            // @ts-ignore
             this.setTrnFormHeight()
+            // @ts-ignore
             if (this.slider) {
+              // @ts-ignore
               this.slider.update()
+              // @ts-ignore
+              this.slider.slideTo(0, 0)
             }
             else {
+              // @ts-ignore
               this.slider = new Swiper(this.$refs.slider, {
                 slidesPerView: 1,
                 autoHeight: true,
                 initialSlide: 0,
+                noSwipingClass: 'trnFormNoSwiping',
                 shortSwipes: false,
                 longSwipesRatio: 0.1,
                 longSwipesMs: 60
@@ -82,182 +108,144 @@ export default {
             }
           })
         }
+        else {
+          clearExpression()
+        }
       },
       immediate: true
     },
 
     amountType () {
+      // @ts-ignore
       this.$nextTick(() => {
+        // @ts-ignore
         this.setTrnFormHeight()
         setTimeout(() => {
+          // @ts-ignore
           this.slider.update()
         }, 1)
       })
     }
   },
 
-  mounted () {
-    //
-  },
-
   methods: {
     handleSubmitForm () {
       try {
-        const isFormValid = this.validateForm()
-        if (isFormValid) {
-          this.showSuccess()
+        const { validate } = useTrnFormValidate()
+        // @ts-ignore
+        const { id, values } = this.prepeareValues(this.isTransfer)
 
-          setTimeout(() => {
-            this.isTransfer
-              ? this.handleSubmitTrnasfer()
-              : this.handleSubmitTrn()
-          }, 100)
+        const validateStatus = validate({
+          ...values,
+          // @ts-ignore
+          walletFrom: this.$store.getters['wallets/getWalletWithId'](this.$store.state.trnForm.values.walletFromId),
+          // @ts-ignore
+          walletTo: this.$store.getters['wallets/getWalletWithId'](this.$store.state.trnForm.values.walletToId)
+        })
+
+        // @ts-ignore
+        if (validateStatus.error) {
+          // @ts-ignore
+          this.$notify({
+            type: 'error',
+            // @ts-ignore
+            title: validateStatus.error.title,
+            // @ts-ignore
+            text: validateStatus.error.text
+          })
+          return
         }
+
+        // @ts-ignore
+        this.$notify({
+          type: 'success',
+          text: 'Excellent transaction!',
+          title: random(successEmo)
+        })
+        // @ts-ignore
+        this.$store.dispatch('trns/addTrn', { id, values })
       }
       catch (e) {
         console.log(e)
       }
     },
 
-    handleSubmitTrn () {
-      const values = { ...this.$store.state.trnForm.values }
-      const id = values.trnId || generateId(this.$day().valueOf())
-
-      this.$store.dispatch('trns/addTrn', {
-        id,
-        values
-      })
-    },
-
-    handleSubmitTrnasfer () {
-      const values = {
-        amount: this.$store.state.trnForm.values.amount,
-        categoryId: this.$store.getters['categories/transferCategoryId'],
-        date: this.$day(this.$store.state.trnForm.values.date).valueOf()
-      }
-
-      // Income
-      this.$store.dispatch('trns/addTrn', {
-        id: generateId(this.$day().valueOf()),
-        values: {
-          ...values,
-          walletId: this.$store.state.trnForm.transfer.to,
-          amountType: 1
-        }
-      })
-
-      // Expense
-      this.$store.dispatch('trns/addTrn', {
-        id: generateId(this.$day().valueOf()),
-        values: {
-          ...values,
-          walletId: this.$store.state.trnForm.transfer.from,
-          amountType: 0
-        }
-      })
-    },
-
     setTrnFormHeight () {
+      // @ts-ignore
       const trnFormHeight = this.$store.state.trnForm.height
 
-      const height = this.$refs.getHeight.clientHeight
+      // @ts-ignore
+      const height = this.$refs.getHeight.clientHeight + 8
       const trnFormHeaderHeight = 0
       const newTrnFormHeight = height - trnFormHeaderHeight
 
       if (trnFormHeight !== newTrnFormHeight) {
+        // @ts-ignore
         this.$store.commit('trnForm/setTrnFormHeight', newTrnFormHeight)
       }
     },
 
-    handleMath () {
-      if (this.$store.state.trnForm.values.amountEvaluation) {
-        const amount = Number(this.$store.state.trnForm.values.amountEvaluation).toLocaleString('ru-RU')
-        this.$store.commit('trnForm/setTrnFormValues', {
-          amount,
-          amountEvaluation: null
-        })
-      }
-    },
+    prepeareValues (isTransfer: boolean): any {
+      let normalizedValues
+      // @ts-ignore
+      const id = this.$store.state.trnForm.values.trnId || generateId(this.$day().valueOf())
+      const { getResult } = useCalculator()
 
-    validateForm () {
-      const formValues = this.$store.state.trnForm.values
-      const formTransferValues = this.$store.state.trnForm.transfer
-      const wallets = this.$store.state.wallets.items
-      if (!formValues.amount) {
-        this.$notify({
-          type: 'error',
-          title: '😮',
-          text: 'Amount can not be empty'
-        })
-        return false
-      }
-      if (formValues.amount < 0) {
-        this.$notify({
-          type: 'error',
-          title: '😮',
-          text: 'Amount can not be negative number'
-        })
-        return false
-      }
-      if (+formValues.amount === 0) {
-        this.$notify({
-          type: 'error',
-          title: '😮',
-          text: 'Amount can not be equal Zero'
-        })
-        return false
-      }
-
-      if (!formValues.walletId) {
-        this.$notify({
-          type: 'error',
-          title: '😮',
-          text: 'Please select wallet'
-        })
-        return false
-      }
-
-      if (!formValues.categoryId) {
-        this.$notify({
-          type: 'error',
-          title: '😮',
-          text: 'Please select category'
-        })
-        return false
-      }
-
-      if (formValues.amountType === 2) {
-        if (formTransferValues.from === formTransferValues.to) {
-          this.$notify({
-            type: 'error',
-            title: '😮',
-            text: 'Transfer in same wallet'
-          })
-          return false
-        }
-
-        const walletFrom = wallets[formTransferValues.from]
-        const walletTo = wallets[formTransferValues.to]
-
-        if (walletFrom.currency !== walletTo.currency) {
-          this.$notify({
-            type: 'error',
-            title: '🤷',
-            text: 'Sorry, transfer between wallets with different currency in development'
-          })
-          return false
+      // Simple
+      if (!isTransfer) {
+        normalizedValues = {
+          // @ts-ignore
+          amount: getResult.value,
+          // @ts-ignore
+          amountFrom: getResult.value,
+          // @ts-ignore
+          amountTo: getResult.value,
+          // @ts-ignore
+          categoryId: this.$store.state.trnForm.values.categoryId,
+          // @ts-ignore
+          date: this.$day(this.$store.state.trnForm.values.date).valueOf(),
+          // @ts-ignore
+          description: this.$store.state.trnForm.values.description || null,
+          // @ts-ignore
+          groups: this.$store.state.trnForm.values.groups || null,
+          // @ts-ignore
+          type: Number(this.$store.state.trnForm.values.amountType) || 0,
+          // @ts-ignore
+          walletId: this.$store.state.trnForm.values.walletId
         }
       }
-      return true
-    },
 
-    showSuccess () {
-      const emo = random(successEmo)
-      this.$notify({
-        type: 'success',
-        text: 'Excellent transaction!',
-        title: emo
-      })
+      // Transfer
+      if (isTransfer) {
+        normalizedValues = {
+          // @ts-ignore
+          amount: getResult.value,
+          // @ts-ignore
+          // @ts-ignore
+          amountFrom: getResult.value,
+          // @ts-ignore
+          amountTo: getResult.value,
+          categoryId: 'transfer',
+          // @ts-ignore
+          date: this.$day(this.$store.state.trnForm.values.date).valueOf(),
+          // @ts-ignore
+          walletId: this.$store.state.trnForm.values.walletFromId,
+          // @ts-ignore
+          walletFromId: this.$store.state.trnForm.values.walletFromId,
+          // @ts-ignore
+          walletToId: this.$store.state.trnForm.values.walletToId,
+          type: 2,
+          // @ts-ignore
+          description: this.$store.state.trnForm.values.description || null,
+          // @ts-ignore
+          groups: this.$store.state.trnForm.values.groups || null
+        }
+      }
+
+      return {
+        id,
+        values: normalizedValues
+      }
     }
   }
 }
@@ -280,9 +268,10 @@ export default {
   transition(name="trnFormAnimation")
     .trnForm__wrap(
       v-show="show"
-      ref="scrollDragger"
       :style="{ maxHeight: `${$store.state.trnForm.height}px` }"
+      ref="scrollDragger"
     )
+      .trnForm__handler
 
       //- Content
       .trnForm__scroll(ref="scrollContent")
@@ -298,33 +287,32 @@ export default {
                   TrnFormHeader
                   TrnFormHeaderTransfer(v-if="isTransfer")
                   TrnFormCalendar
-                  TrnFormAmountInput(@onFormSubmit="handleSubmitForm")
-                  template(v-if="$store.getters['categories/quickSelectorCategoriesIds'].length")
+                  TrnFormAmountPc
+                  TrnFormCalculator(
+                    pc
+                    @onSubmit="handleSubmitForm"
+                  )
+                  .trnFormNoSwiping2(v-if="$store.getters['categories/quickSelectorCategoriesIds'].length")
+                    //- TrnFormCategories(:show="show")
                     .trnForm__quickCats
                       .formTitle {{ $t('categories.favoriteTitle') }}
                       CategoriesView(
                         :ids="$store.getters['categories/quickSelectorCategoriesIds']"
-                        ui="_flat"
                         :noPaddingBottom="true"
+                        ui="_flat"
                         @onClick="categoryId => $store.commit('trnForm/setTrnFormValues', { categoryId })"
                       )
 
                 //- Mobile
                 template(v-if="$store.state.ui.mobile")
-                  TrnFormAmount(
-                    @handleMath="handleMath"
-                    @onFormSubmit="handleSubmitForm"
-                  )
+                  TrnFormAmount
                   TrnFormCalendar
-                  LazyTrnFormCalculator(
-                    v-if="$store.state.ui.mobile"
-                    @onFormSubmit="handleSubmitForm"
-                  )
+                  TrnFormCalculator(@onSubmit="handleSubmitForm")
                   TrnFormHeader
                   TrnFormHeaderTransfer(v-if="isTransfer")
 
               .swiper-slide(:style="{ minHeight: `${$store.state.trnForm.height}px` }")
-                template(v-if="slider")
+                div(v-if="slider")
                   TrnFormTrns(
                     :slider="slider"
                     onlyList
@@ -359,6 +347,7 @@ export default {
 
     @media $media-laptop
       padding-bottom $m7
+      border-radius 16px
 
   &__quickCats
     opacity .8
@@ -369,6 +358,7 @@ export default {
 
   &__wrap
     overflow hidden
+    position relative
     border-radius 16px 16px 0 0
 
     &._anim
@@ -376,4 +366,26 @@ export default {
 
     @media $media-laptop
       border-radius 16px
+
+  &__content
+    padding-top 8px
+
+  &__handler
+    z-index 2
+    position absolute
+    top 0
+    left 0
+    display flex
+    align-items center
+    justify-content center
+    width 100%
+    height 16px
+
+    &:after
+      content ''
+      display block
+      width 32px
+      height 4px
+      background var(--c-bg-8)
+      border-radius 4px
 </style>

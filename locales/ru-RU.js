@@ -19,6 +19,8 @@ export default {
 
   trnForm: {
     transferTitle: 'Перевод',
+    saveTrnButton: 'Сохранить',
+    calcTrnButton: 'Посчитать результат',
     createTrnButton: 'Создать транзакцию',
     createTransferButton: 'Создать перевод',
     titleEditTrn: 'Редактирование транзакции',
@@ -31,6 +33,10 @@ export default {
     description: {
       title: 'Описание',
       placeholder: 'Напишите описание...'
+    },
+    transfer: {
+      from: 'Из',
+      to: 'В'
     }
   },
 
@@ -45,7 +51,8 @@ export default {
   app: {
     update: {
       title: 'Доступа новая версия',
-      text: 'Перезагрузи приложение, чтобы использовать все новые фишки.'
+      text: 'Перезагрузи приложение, чтобы использовать все новые фишки.',
+      button: ' Перезагрузить'
     },
     version: 'Версия',
     desc: 'Приложение для учета личных финансов',
@@ -79,6 +86,7 @@ export default {
     sort: 'Сортировка',
     save: 'Сохранить',
     cancel: 'Отмена',
+    ok: 'Хорошо',
     on: 'Да',
     dublicate: 'Дублировать',
     setFilter: 'Применить фильтр по',
@@ -210,6 +218,7 @@ export default {
     title: 'Статистика',
     selectedPeriod: 'Выбранный период',
     shortTitle: 'Статистика',
+    summary2: 'Стат2',
     balanceTitle: 'Баланс',
     periods: 'Общее',
     empty: 'Статистики по выбранным параметрам нет :)',

@@ -121,6 +121,7 @@ Portal(
 
     template(slot="btns")
       ModalButton(
+        v-if="categoryId !== 'transfer'"
         :name="$t('base.delete')"
         icon="mdi mdi-delete"
         @onClick="handleDeleteClick"
@@ -145,10 +146,11 @@ Portal(
       )
 
   ModalBottomConfirm(
-    :show="showModalConfirm"
     :description="deleteInfo"
+    :show="showModalConfirm"
     @onClose="showModalConfirm = false"
-    @onConfirm="handleDeleteConfirm")
+    @onConfirm="handleDeleteConfirm"
+  )
 </template>
 
 <style lang="stylus" scoped>

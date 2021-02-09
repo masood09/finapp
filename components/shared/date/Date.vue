@@ -16,12 +16,6 @@ export default {
 
       switch (filterPeriod) {
         case 'day':
-          // if (today.isSame(filterDate, 'day')) {
-          //   return this.$t('dates.day.current')
-          // }
-          // else if (today.subtract(1, filterPeriod).isSame(filterDate, 'day')) {
-          //   return 'Yesterday'
-          // }
           if (today.isSame(filterDate, 'year')) {
             format = 'DD MMMM'
           }
@@ -43,9 +37,6 @@ export default {
           return `${startDate} - ${endDate}`
 
         case 'month':
-          // if (today.isSame(filterDate, 'month')) {
-          //   return this.$t('dates.month.current')
-          // }
           if (today.isSame(filterDate, 'year')) {
             format = 'MMMM'
             break
@@ -67,20 +58,14 @@ export default {
 <template lang="pug">
 .date
   template(v-if="$store.state.filter.period === 'all'") {{ $t('dates.all.simple') }}
-  template(v-else)
-    template(v-if="type === 0") {{ $t('money.expenses') }} &nbsp;
-    template(v-if="type === 1") {{ $t('money.incomes') }} &nbsp;
-    template(v-if="type === 2") {{ $t('money.total') }} &nbsp;
-    .hey {{ formatedDate }}
+  template(v-else) {{ formatedDate }}
 </template>
 
 <style lang="stylus" scoped>
 .date
   display flex
   align-items center
+
   &:first-letter
     text-transform uppercase
-
-.hey:first-letter
-  text-transform uppercase
 </style>

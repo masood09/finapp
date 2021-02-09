@@ -1,12 +1,12 @@
 import localforage from 'localforage'
 import dayjs from 'dayjs'
-
 import {
   removeTrnToAddLaterLocal,
   saveTrnToAddLaterLocal,
   saveTrnIDforDeleteWhenClientOnline,
   removeTrnToDeleteLaterLocal
 } from './helpers'
+import useCalculator from '~/components/trnForm/calculator/useCalculator'
 import { db } from '~/services/firebaseConfig'
 
 export default {
@@ -23,23 +23,17 @@ export default {
   addTrn ({ commit, rootState }, { id, values }) {
     const uid = rootState.user.user.uid
     const trns = rootState.trns.items
-    let isTrnSavedOnline = false
-    const formatedTrnValues = {
-      amount: Number(String(values.amount).replace(/\s+/g, '')),
-      categoryId: values.categoryId,
-      date: dayjs(values.date).valueOf(),
-      description: values.description || null,
-      edited: dayjs().valueOf(),
-      groups: values.groups || null,
-      type: Number(values.amountType) || 0,
-      walletId: values.walletId
+    const valuesWithEditDate = {
+      ...values,
+      edited: dayjs().valueOf()
     }
+    let isTrnSavedOnline = false
 
-    localforage.setItem('finapp.trns', { ...trns, [id]: formatedTrnValues })
-    commit('setTrns', Object.freeze({ ...trns, [id]: formatedTrnValues }))
+    localforage.setItem('finapp.trns', { ...trns, [id]: valuesWithEditDate })
+    commit('setTrns', Object.freeze({ ...trns, [id]: valuesWithEditDate }))
 
     db.ref(`users/${uid}/trns/${id}`)
-      .set(formatedTrnValues)
+      .set(valuesWithEditDate)
       .then(() => {
         isTrnSavedOnline = true
         removeTrnToAddLaterLocal(id)
@@ -47,14 +41,18 @@ export default {
 
     setTimeout(() => {
       if (!isTrnSavedOnline) { saveTrnToAddLaterLocal({ id, values }) }
-    }, 100)
+    }, 1000)
+
+    const { clearExpression } = useCalculator()
+    clearExpression()
 
     commit('trnForm/setTrnFormValues', {
       trnId: null,
       amount: '0',
-      amountEvaluation: null,
       description: null
     }, { root: true })
+
+    return true
   },
 
   // delete
@@ -159,7 +157,7 @@ export default {
 
           // add
           else if (trnsItemsForUpdate[trnId] && trnsItemsForUpdate[trnId].amount) {
-            console.log('update', trnsItemsForUpdate[trnId])
+            console.log('update', trnId, trnsItemsForUpdate[trnId])
             dispatch('addTrn', {
               id: trnId,
               values: trnsItemsForUpdate[trnId]

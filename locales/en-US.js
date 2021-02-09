@@ -18,6 +18,8 @@ export default {
 
   trnForm: {
     transferTitle: 'Transfer',
+    saveTrnButton: 'Save transaction',
+    calcTrnButton: 'Calculate',
     createTrnButton: 'Create transaction',
     createTransferButton: 'Create transfer',
     titleEditTrn: 'Edit transaction',
@@ -30,6 +32,10 @@ export default {
     description: {
       title: 'Description',
       placeholder: 'Write description...'
+    },
+    transfer: {
+      from: 'From',
+      to: 'To'
     }
   },
 
@@ -44,7 +50,8 @@ export default {
   app: {
     update: {
       title: 'New version available',
-      text: 'Reload the app to use new futures.'
+      text: 'Reload the app to use new futures.',
+      button: 'Reload'
     },
     version: 'Version',
     desc: 'Powerful personal finance application',
@@ -80,6 +87,7 @@ export default {
     dublicate: 'Dublicate',
     setFilter: 'Set filter by',
     on: 'On',
+    ok: 'Ok',
     off: 'Off',
     edit: 'Edit',
     delete: 'Delete',
@@ -208,6 +216,7 @@ export default {
     title: 'Statistics',
     selectedPeriod: 'Selected period',
     shortTitle: 'Stat',
+    summary2: 'Stat2',
     periods: 'Detail',
     balanceTitle: 'Balance',
     empty: 'No stat for this period',
